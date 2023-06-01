@@ -1,18 +1,26 @@
 const template = document.createElement('template');
 template.innerHTML = `
 <div class="container">
-    <input class="slider" type="range" id="slider" name="slider" min="0" max="0" step="">
+    <input class="slider" type="range" id="slider" name="slider" min="0" max="0" step="0">
     <label class="input-label" for="slider">Slider</label>
+    <span class="slider-value">$ 0</span>
 </div>
 `;
-
 class RangeSlider extends HTMLElement {
     _config;
     shadowRoot = this.attachShadow({mode: 'open'});
+    sliderElement; 
+    sliderValue
     constructor(){
         super();
         let templateClone = template.content.cloneNode(true);
         this.shadowRoot.append(templateClone);
+        this.sliderElement = this.shadowRoot.querySelector('.slider');
+        this.sliderValue = this.shadowRoot.querySelector('.slider-value');
+        this.sliderElement.addEventListener('input', ()=>{
+            this.updateReactiveValue(this.sliderElement.value);
+        })
+
     }
 
     static get observedAttributes() {
@@ -39,14 +47,19 @@ class RangeSlider extends HTMLElement {
     }
 
     updateSliderProperties(config) {
-        const sliderElement = this.shadowRoot.querySelector('.slider');
         const sliderLabel = this.shadowRoot.querySelector('.input-label')
-        sliderElement.min = config.min || '0';
-        sliderElement.max = config.max || '0';
-        sliderElement.step = config.step || '0';
-        sliderElement.name = config.container || 'default';
+        this.sliderElement.min = config.min || '0';
+        this.sliderElement.max = config.max || '0';
+        this.sliderElement.step = config.step || '0';
+        this.sliderElement.name = config.container || 'default';
         sliderLabel.innerHTML = config.container || 'default'
+    }
+
+    updateReactiveValue(value){
+        this.sliderValue.innerHTML = `\$ ${value}`;
     }
 }
 
-customElements.define('range-slider', RangeSlider);
+if(!customElements.get('range-slider')){
+    customElements.define('range-slider', RangeSlider);
+}
