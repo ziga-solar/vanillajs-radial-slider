@@ -3,9 +3,9 @@ const oneSlider  = {
         {
             "container":"Transportation",
             "color":"#444389",
-            "max-val":10,
-            "min-val":0,
-            "step": 0,
+            "max":10,
+            "min":0,
+            "step": 2,
             "radius": 0
         }
     ]
@@ -17,16 +17,16 @@ const twoSliders = {
         {
             "container":"Transportation",
             "color":"#444389",
-            "max-val":10,
-            "min-val":0,
-            "step": 0,
-            "radius": 0
+            "max":10,
+            "min":0,
+            "step":2,
+            "radius":0
         },
         {
             "container":"Food",
             "color":"#1CCAD8",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         }
@@ -39,24 +39,24 @@ const threeSliders = {
         {
             "container":"Transportation",
             "color":"#444389",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         },
         {
             "container":"Food",
             "color":"#1CCAD8",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         },
         {
             "container":"Insurance",
             "color":"#1EAE4E",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         }
@@ -69,32 +69,32 @@ const fourSliders = {
         {
             "container":"Transportation",
             "color":"#444389",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         },
         {
             "container":"Food",
             "color":"#1CCAD8",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         },
         {
             "container":"Insurance",
             "color":"#1EAE4E",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         },
         {
             "container":"Entertainment",
             "color":"#FFEC51",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         }
@@ -107,40 +107,40 @@ const fiveSliders = {
         {
             "container":"Transportation",
             "color":"#444389",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         },
         {
             "container":"Food",
             "color":"#1CCAD8",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         },
         {
             "container":"Insurance",
             "color":"#1EAE4E",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         },
         {
             "container":"Entertainment",
             "color":"#FFEC51",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         },
         {
             "container":"Health care",
             "color":"#FF674D",
-            "max-val":10,
-            "min-val":0,
+            "max":10,
+            "min":0,
             "step": 0,
             "radius": 0
         }
