@@ -17,6 +17,7 @@ This sections contains the necessary (main) tasks that need to be completed for 
 - [ ] Change shape of range slider into a circle
 - [ ] Add color rendering of data line
 - [ ] Add multiple sliders
+- [ ] Styling application to fit mockups
 
 ### Additional optional tasks
 
