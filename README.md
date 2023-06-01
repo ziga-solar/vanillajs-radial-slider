@@ -25,3 +25,10 @@ This sections contains the necessary (main) tasks that need to be completed for 
 ### Potential UX improvements
 - [ ] Identify potential UX improvements in the slider
 - [ ] Prepare a list of UX improvements
+
+## Low-fi mocks
+These low-fi mockups were created in Figma
+### Mobile
+![low-fi mobile](/assets/images/low_fi_mobile.png)
+### Desktop
+![low-fi desktop](/assets/images/low_fi_desktop.png)
