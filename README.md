@@ -11,8 +11,8 @@ This sections contains the necessary (main) tasks that need to be completed for 
 - [x] Create mobile first low-fi wireframes for mobile and desktop
 - [x] Create range slider
 - [x] Add options parameters to range slider
-- [ ] Add reactivity
-- [ ] Add JS rendering of HTML for range slider
+- [x] Add reactivity
+- [x] Add JS rendering of HTML for range slider
 - [ ] Optimize slider for touch interactions 
 - [ ] Change shape of range slider into a circle
 - [ ] Add color rendering of data line
