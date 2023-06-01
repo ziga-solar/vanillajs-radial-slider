@@ -1,0 +1,37 @@
+{
+    "sliderArray": [
+        {
+            "container":"Transportation",
+            "color":"#444389",
+            "max-val":10,
+            "min-val":0,
+            "step": 0,
+            "radius": 0
+        },
+        {
+            "container":"Food",
+            "color":"#1CCAD8",
+            "max-val":10,
+            "min-val":0,
+            "step": 0,
+            "radius": 0
+        },
+        {
+            "container":"Insurance",
+            "color":"#1EAE4E",
+            "max-val":10,
+            "min-val":0,
+            "step": 0,
+            "radius": 0
+        },
+        {
+            "container":"Entertainment",
+            "color":"#FFEC51",
+            "max-val":10,
+            "min-val":0,
+            "step": 0,
+            "radius": 0
+        }
+    ]
+
+}
