@@ -1,7 +1,14 @@
 const template = document.createElement('template');
 template.innerHTML = `
+<style>
+slider-input::-webkit-slider-runnable-track {
+    background: #ddd;
+}
+</style>
 <div class="container">
-    <input class="slider" type="range" id="slider" name="slider" min="0" max="0" step="0">
+    <div class="radial-slider"> 
+        <input class="slider-input" type="range" id="slider" name="slider" min="0" max="0" step="0">
+    </div>
     <label class="input-label" for="slider">Slider</label>
     <span class="slider-value">$ 0</span>
 </div>
@@ -15,10 +22,11 @@ class RangeSlider extends HTMLElement {
         super();
         let templateClone = template.content.cloneNode(true);
         this.shadowRoot.append(templateClone);
-        this.sliderElement = this.shadowRoot.querySelector('.slider');
+        this.sliderElement = this.shadowRoot.querySelector('.slider-input');
         this.sliderValue = this.shadowRoot.querySelector('.slider-value');
         this.sliderElement.addEventListener('input', ()=>{
-            this.updateReactiveValue(this.sliderElement.value);
+            let slider = this.sliderElement;
+            this.updateReactiveValue(slider.value);
         })
 
     }

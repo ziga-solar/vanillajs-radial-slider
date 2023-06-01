@@ -5,7 +5,7 @@ const oneSlider  = {
             "color":"#444389",
             "max":10,
             "min":0,
-            "step": 2,
+            "step": 0,
             "radius": 0
         }
     ]
