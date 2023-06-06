@@ -3,9 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 function addDraggable(e) {
   const radius = 15;
+  const progressConst = Math.ceil(2 * Math.PI * radius);
   const svg = e.target;
   const tack = svg.querySelector('.rs-tack');
   const slider = svg.querySelector('.rs-slider');
+  const progress = svg.querySelector('.rs-progress');
   // retrieve center of SVG
   const rect = slider.getBoundingClientRect();
   const centerPos = getMousePosition(
@@ -41,9 +43,19 @@ function addDraggable(e) {
       } else {
         coords = getMousePosition(e.clientY, e.clientX);
       }
-      const angle = Math.atan2(coords.y - centerPos.y, coords.x - centerPos.x);
-      const pointY = centerPos.y + radius * Math.sin(angle);
-      const pointX = centerPos.x + radius * Math.cos(angle);
+      const angleRad = Math.atan2(
+        coords.y - centerPos.y,
+        coords.x - centerPos.x
+      );
+      const angle = Math.floor((angleRad * 180) / Math.PI) + 90;
+      // shift angle for one quadrant and calculate percentage
+      const pct = Math.floor((angle < 0 ? angle + 360 : angle) / 3.6);
+
+      progress.style.strokeDasharray = `${
+        (pct * progressConst) / 100
+      } ${progressConst}`;
+      const pointY = centerPos.y + radius * Math.sin(angleRad);
+      const pointX = centerPos.x + radius * Math.cos(angleRad);
 
       moveTack(pointY, pointX);
     }
