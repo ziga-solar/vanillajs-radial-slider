@@ -12,7 +12,6 @@ function addDraggable(e) {
     Math.abs(rect.height - rect.top / 2 + radius),
     Math.abs(rect.width - rect.left / 2 + radius)
   );
-  console.log(centerPos);
   tack.setAttributeNS(null, 'cy', centerPos.y - radius);
   tack.setAttributeNS(null, 'cx', centerPos.x);
 
@@ -36,7 +35,12 @@ function addDraggable(e) {
 
   function drag(e) {
     if (isDraggable) {
-      const coords = getMousePosition(e.clientY, e.clientX);
+      let coords;
+      if (e.type === 'touchmove') {
+        coords = getMousePosition(e.touches[0].clientY, e.touches[0].clientX);
+      } else {
+        coords = getMousePosition(e.clientY, e.clientX);
+      }
       const angle = Math.atan2(coords.y - centerPos.y, coords.x - centerPos.x);
       const pointY = centerPos.y + radius * Math.sin(angle);
       const pointX = centerPos.x + radius * Math.cos(angle);
