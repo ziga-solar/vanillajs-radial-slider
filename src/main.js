@@ -1,31 +1,41 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Landing page is loaded');
+  console.log('Landing page is loaded');
+});
 
-    let tackElement = document.querySelector('svg .tack');
-    console.log(tackElement);
-    tackElement.addEventListener('mousedown', (ev) => {
-        console.log(ev);
-    });
-    tackElement.addEventListener('mouseup', () => {
-        console.log('mouseup');
-    });
-    tackElement.addEventListener('touchstart', () => {
-        console.log('touchstart');
-    });
-    tackElement.addEventListener('touchend', () => {
-        console.log('mousedown');
-    });
-    tackElement.addEventListener('mousemove', () => {
-        console.log('mousemove');
-    });
-    tackElement.addEventListener('touchmove', () => {
-        console.log('touchmove');
-    });
-    console.log(tackElement);
+function moveElement(el, x, y) {
+  el.style.transform = `translate(${mouseX - x}px, ${mouseY - y}px)`;
+}
 
-})
+function addDraggable(e) {
+  let svg = e.target;
+  let tack = svg.querySelector('.tack');
+  let isDraggable = false;
 
+  tack.addEventListener('mousedown', () => {
+    setIsDraggable(true);
+  });
+  tack.addEventListener('mousemove', drag);
+  tack.addEventListener('mouseup', () => {
+    setIsDraggable(false);
+  });
 
+  function drag(e) {
+    if (isDraggable) {
+      let coords = getMousePosition(e);
+      tack.setAttributeNS(null, 'cx', coords.x);
+      tack.setAttributeNS(null, 'cy', coords.y);
+    }
+  }
 
+  function setIsDraggable(draggable) {
+    isDraggable = draggable;
+  }
 
-
+  function getMousePosition(e) {
+    let CTM = svg.getScreenCTM();
+    return {
+      x: (e.clientX - CTM.e) / CTM.a,
+      y: (e.clientY - CTM.f) / CTM.d,
+    };
+  }
+}
