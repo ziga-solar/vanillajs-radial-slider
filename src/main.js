@@ -6,10 +6,11 @@ function addDraggable(e) {
   const svg = e.target;
   const tack = svg.querySelector('.rs-tack');
   const slider = svg.querySelector('.rs-slider');
+  // retrieve center of SVG
   const rect = slider.getBoundingClientRect();
   const centerPos = getMousePosition(
-    Math.abs(rect.height - rect.top / 2),
-    Math.abs(rect.width - rect.left / 2)
+    Math.abs(rect.height - rect.top / 2 + radius),
+    Math.abs(rect.width - rect.left / 2 + radius)
   );
   console.log(centerPos);
   tack.setAttributeNS(null, 'cy', centerPos.y - radius);
