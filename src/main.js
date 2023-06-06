@@ -1,14 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Landing page is loaded');
 });
-
-function moveElement(el, x, y) {
-  el.style.transform = `translate(${mouseX - x}px, ${mouseY - y}px)`;
-}
-
 function addDraggable(e) {
-  let svg = e.target;
-  let tack = svg.querySelector('.tack');
+  const radius = 15;
+  const svg = e.target;
+  const tack = svg.querySelector('.rs-tack');
+  const slider = svg.querySelector('.rs-slider');
+  const rect = slider.getBoundingClientRect();
+  const centerPos = getMousePosition(
+    Math.abs(rect.height - rect.top / 2),
+    Math.abs(rect.width - rect.left / 2)
+  );
+  console.log(centerPos);
+  tack.setAttributeNS(null, 'cy', centerPos.y - radius);
+  tack.setAttributeNS(null, 'cx', centerPos.x);
+
   let isDraggable = false;
 
   tack.addEventListener('mousedown', () => {
@@ -19,11 +25,22 @@ function addDraggable(e) {
     setIsDraggable(false);
   });
 
+  tack.addEventListener('touchstart', () => {
+    setIsDraggable(true);
+  });
+  tack.addEventListener('touchmove', drag);
+  tack.addEventListener('touchend', () => {
+    setIsDraggable(false);
+  });
+
   function drag(e) {
     if (isDraggable) {
-      let coords = getMousePosition(e);
-      tack.setAttributeNS(null, 'cx', coords.x);
-      tack.setAttributeNS(null, 'cy', coords.y);
+      const coords = getMousePosition(e.clientY, e.clientX);
+      const angle = Math.atan2(coords.y - centerPos.y, coords.x - centerPos.x);
+      const pointY = centerPos.y + radius * Math.sin(angle);
+      const pointX = centerPos.x + radius * Math.cos(angle);
+
+      moveTack(pointY, pointX);
     }
   }
 
@@ -31,11 +48,17 @@ function addDraggable(e) {
     isDraggable = draggable;
   }
 
-  function getMousePosition(e) {
+  function moveTack(y, x) {
+    tack.setAttributeNS(null, 'cy', y);
+    tack.setAttributeNS(null, 'cx', x);
+  }
+
+  function getMousePosition(y, x) {
     let CTM = svg.getScreenCTM();
+
     return {
-      x: (e.clientX - CTM.e) / CTM.a,
-      y: (e.clientY - CTM.f) / CTM.d,
+      y: (y - CTM.f) / CTM.d,
+      x: (x - CTM.e) / CTM.a,
     };
   }
 }
