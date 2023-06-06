@@ -1,12 +1,31 @@
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
     console.log('Landing page is loaded');
 
-/*     const sliderData = oneSlider;
+    let tackElement = document.querySelector('svg .tack');
+    console.log(tackElement);
+    tackElement.addEventListener('mousedown', (ev) => {
+        console.log(ev);
+    });
+    tackElement.addEventListener('mouseup', () => {
+        console.log('mouseup');
+    });
+    tackElement.addEventListener('touchstart', () => {
+        console.log('touchstart');
+    });
+    tackElement.addEventListener('touchend', () => {
+        console.log('mousedown');
+    });
+    tackElement.addEventListener('mousemove', () => {
+        console.log('mousemove');
+    });
+    tackElement.addEventListener('touchmove', () => {
+        console.log('touchmove');
+    });
+    console.log(tackElement);
 
-    const rangeSliderElement = document.querySelector('range-slider');
-
-    rangeSliderElement.config = sliderData.sliderArray[0]; */
 })
+
+
 
 
 
