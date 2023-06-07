@@ -6,7 +6,7 @@ const oneSlider = {
       max: 800,
       min: 0,
       step: 10,
-      radius: 15,
+      radius: 35,
     },
   ],
 };

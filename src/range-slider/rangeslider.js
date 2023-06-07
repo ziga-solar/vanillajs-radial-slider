@@ -1,7 +1,9 @@
 const template = document.createElement('template');
 template.innerHTML = `
 <style>
-div.container{
+div.rs-container{
+		width: 500px;
+		height: 500px;
     margin: 0 auto;
     display: inline-block;
     touch-action: none;
@@ -32,32 +34,32 @@ div.rs-container svg text.rs-value-text {
 </style>
 <div class="rs-container">
 	<svg
-		viewBox="0 0 50 50"
+		viewBox="0 0 100 100"
 		xmlns="http://www.w3.org/2000/svg"
 	>
 		<circle
-			r="15"
-			cx="25"
-			cy="25"
+			r="0"
+			cx="50"
+			cy="50"
 			stroke-width="3px"
 			stroke="lightgray"
 			fill="gray"
 			fill-opacity="0.0"
+			class="rs-background"
 		/>
 		<circle
-			r="15"
-			cx="25"
-			cy="25"
+			r="0"
+			cx="50"
+			cy="50"
 			stroke="white"
 			stroke-width="3px"
-			stroke-dasharray="0.1 0.9"
 			fill-opacity="0.0"
 			class="rs-slider"
 		/>
 		<circle
-			r="15"
-			cx="25"
-			cy="25"
+			r="0"
+			cx="50"
+			cy="50"
 			stroke-width="3px"
 			stroke-opacity="0.5"
 			fill-opacity="0.0"
@@ -66,8 +68,8 @@ div.rs-container svg text.rs-value-text {
 		<circle
 			r="2"
 			fill="white"
-			cx="25"
-			cy="25"
+			cx="50"
+			cy="50"
 			stroke="gray"
 			stroke-width="0.2px"
 			class="rs-tack"
@@ -84,6 +86,7 @@ class RangeSlider extends HTMLElement {
   tackEl;
   sliderEl;
   progressEl;
+  backgroundEl;
   textEl;
   centerPos;
   isDraggable;
@@ -108,6 +111,7 @@ class RangeSlider extends HTMLElement {
     this.tackEl = this.svgEl.querySelector('.rs-tack');
     this.sliderEl = this.svgEl.querySelector('.rs-slider');
     this.progressEl = this.svgEl.querySelector('.rs-progress');
+    this.backgroundEl = this.svgEl.querySelector('.rs-background');
     this.textEl = this.svgEl.querySelector('.rs-value-text');
 
     //add event listeners
@@ -170,7 +174,7 @@ class RangeSlider extends HTMLElement {
       const stepPercentage = 100 / numberOfSteps;
       const stepDegree = 360 / numberOfSteps;
       const stepRadian = (2 * Math.PI) / numberOfSteps;
-      const progressConst = (2 * Math.PI) / numberOfSteps;
+      const progressConst = Math.ceil(2 * Math.PI * newVal.radius);
       this.componentConfig = {
         valueRange: valueRange,
         numberOfSteps: numberOfSteps,
@@ -190,19 +194,22 @@ class RangeSlider extends HTMLElement {
   }
 
   setupSlider(config) {
+    this.backgroundEl.setAttributeNS(null, 'r', config.radius);
+    this.progressEl.setAttributeNS(null, 'r', config.radius);
+    this.sliderEl.setAttributeNS(null, 'r', config.radius);
+
     this.textEl.style.display = `none`;
     // retrieve bounding box of slider
     const rect = this.sliderEl.getBoundingClientRect();
+    console.log(rect);
     // correction to retrieve element center coordinates
     this.centerPos = this.getPosition(
-      Math.abs(rect.height - rect.top / 2 + config.radius),
-      Math.abs(rect.width - rect.left / 2 + config.radius)
+      Math.abs(rect.height / 2 + rect.top),
+      Math.abs(rect.width / 2 + rect.left)
     );
 
-    console.log(this.tackEl);
-    console.log(config.radius);
-    this.tackEl.style.transform = `translate(${0}px, ${-config.radius}px)`;
-    console.log(this.tackEl);
+    this.moveTack(this.centerPos.y - config.radius, this.centerPos.x);
+
     this.isDraggable = false;
     this.isMouseOutside = false;
     this.percentage = 0;
@@ -267,7 +274,7 @@ class RangeSlider extends HTMLElement {
           }
         } else {
           this.percentage = 100;
-          this.updateReactiveValue(config.max);
+          this.updateReactiveValue(this._config.max);
           this.setProgressBar();
           this.moveTack(
             this.centerPos.y - this._config.radius,
@@ -293,7 +300,8 @@ class RangeSlider extends HTMLElement {
   }
 
   moveTack(y, x) {
-    this.tackEl.setAttributeNS(null, 'cy', y + this._config.radius);
+    console.log(x, y);
+    this.tackEl.setAttributeNS(null, 'cy', y);
     this.tackEl.setAttributeNS(null, 'cx', x);
     this.textEl.setAttributeNS(null, 'y', y - 4);
     this.textEl.setAttributeNS(null, 'x', x);
@@ -309,6 +317,7 @@ class RangeSlider extends HTMLElement {
   }
 
   setProgressBar() {
+    console.log(this.componentConfig.progressConst);
     this.progressEl.style.strokeDasharray = `${
       (this.percentage * this.componentConfig.progressConst) / 100
     } ${this.componentConfig.progressConst}`;
