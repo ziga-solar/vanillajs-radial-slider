@@ -7,10 +7,17 @@ div.rs-container{
     margin: 0 auto;
     display: inline-block;
     touch-action: none;
+    position: relative;
+    pointer-events: none;
 }
 div.rs-container svg {
     width: 100%;
     height: 100%;
+		position: absolute;
+		pointer-events: none;	
+}
+div.rs-container svg circle.rs-tack{
+	pointer-events: auto;	
 }
 div.rs-container svg circle.rs-progress{
     transform: rotate(-90deg);
@@ -34,13 +41,13 @@ div.rs-container svg text.rs-value-text {
 </style>
 <div class="rs-container">
 	<svg
-		viewBox="0 0 100 100"
+		viewBox="0 0 150 150"
 		xmlns="http://www.w3.org/2000/svg"
 	>
 		<circle
 			r="0"
-			cx="50"
-			cy="50"
+			cx="75"
+			cy="75"
 			stroke-width="3px"
 			stroke="lightgray"
 			fill="gray"
@@ -49,8 +56,8 @@ div.rs-container svg text.rs-value-text {
 		/>
 		<circle
 			r="0"
-			cx="50"
-			cy="50"
+			cx="75"
+			cy="75"
 			stroke="white"
 			stroke-width="3px"
 			fill-opacity="0.0"
@@ -58,8 +65,8 @@ div.rs-container svg text.rs-value-text {
 		/>
 		<circle
 			r="0"
-			cx="50"
-			cy="50"
+			cx="75"
+			cy="75"
 			stroke-width="3px"
 			stroke-opacity="0.5"
 			fill-opacity="0.0"
@@ -68,8 +75,8 @@ div.rs-container svg text.rs-value-text {
 		<circle
 			r="2"
 			fill="white"
-			cx="50"
-			cy="50"
+			cx="75"
+			cy="75"
 			stroke="gray"
 			stroke-width="0.2px"
 			class="rs-tack"
@@ -81,7 +88,7 @@ div.rs-container svg text.rs-value-text {
 `;
 class RangeSlider extends HTMLElement {
   _config;
-  shadowRoot = this.attachShadow({ mode: 'open' });
+  shadowRoot = this.attachShadow({ mode: 'closed' });
   svgEl;
   tackEl;
   sliderEl;
@@ -92,6 +99,7 @@ class RangeSlider extends HTMLElement {
   isDraggable;
   isMouseOutside;
   percentage;
+	currentStep;
   value;
 
   componentConfig = {
@@ -197,11 +205,12 @@ class RangeSlider extends HTMLElement {
     this.backgroundEl.setAttributeNS(null, 'r', config.radius);
     this.progressEl.setAttributeNS(null, 'r', config.radius);
     this.sliderEl.setAttributeNS(null, 'r', config.radius);
-
     this.textEl.style.display = `none`;
     // retrieve bounding box of slider
+		console.log(this.sliderEl);
     const rect = this.sliderEl.getBoundingClientRect();
     // correction to retrieve element center coordinates
+		console.log(this.sliderEl);
     this.centerPos = this.getPosition(
       Math.abs(rect.height / 2 + rect.top),
       Math.abs(rect.width / 2 + rect.left)
@@ -227,13 +236,12 @@ class RangeSlider extends HTMLElement {
   drag(e) {
     if (this.isDraggable) {
       let coords;
-
+	
       if (e.type === 'touchmove') {
         coords = this.getPosition(e.touches[0].clientY, e.touches[0].clientX);
       } else {
         coords = this.getPosition(e.clientY, e.clientX);
       }
-
       const angleRad = Math.atan2(
         coords.y - this.centerPos.y,
         coords.x - this.centerPos.x
@@ -256,14 +264,14 @@ class RangeSlider extends HTMLElement {
       const radianStep =
         ((step * this.componentConfig.stepDegree - 90) * Math.PI) / 180;
       // check so bar doesn't move over 100% or below 0% unless the user rotates it for an extra 25%
+
       if (this.percentage - percentageStep > -75) {
         if (percentageStep - this.percentage > -75) {
           if (
-            (percentageStep !== this.percentage) &
-            (percentageStep % this.componentConfig.stepPercentage === 0)
+            (percentageStep !== this.percentage)
           ) {
             this.percentage = percentageStep;
-            this.updateReactiveValue(step * this._config.step);
+            this.updateReactiveValue(step * this._config.step + this._config.min);
             this.setProgressBar();
             const pointY =
               this.centerPos.y + this._config.radius * Math.sin(radianStep);

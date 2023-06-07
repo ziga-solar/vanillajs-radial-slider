@@ -1,11 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Landing page is loaded');
+  let i = 1;
 
-  const sliderData = oneSlider;
+  const sliderData = fiveSliders.sliderArray;
+  const sliderContainerElement = document.querySelector('.slider-container');
+  sliderData.forEach(slider => {
+    const rangeSliderElement = document.createElement('range-slider');
+    sliderContainerElement.appendChild(rangeSliderElement)
+    rangeSliderElement.classList.add(`slider-${i}`)
+    rangeSliderElement.config = sliderData[i-1];
+    i = i + 1;
+  });
 
-  const rangeSliderElement = document.querySelector('range-slider');
-
-  rangeSliderElement.config = sliderData.sliderArray[0];
 });
 function addDraggable(e) {
   //config
