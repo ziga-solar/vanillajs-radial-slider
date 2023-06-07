@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.0.0] 2023-06-07
+
+- Updated styling to match mockup
+
 ## [0.1.0] 2023-06-07
 
 - Changed slider into circular shape
