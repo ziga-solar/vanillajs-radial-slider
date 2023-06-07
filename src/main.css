@@ -1,0 +1,19 @@
+div.main-container{
+    display: flex;
+}
+
+div.slider-container,
+div.value-container{
+    flex: 1;
+}
+
+div.slider-container{
+    position: relative;
+}
+
+range-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
