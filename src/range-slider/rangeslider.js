@@ -1,73 +1,320 @@
 const template = document.createElement('template');
 template.innerHTML = `
 <style>
-slider-input::-webkit-slider-runnable-track {
-    background: #ddd;
+div.container{
+    margin: 0 auto;
+    display: inline-block;
+    touch-action: none;
+}
+div.rs-container svg {
+    width: 100%;
+    height: 100%;
+}
+div.rs-container svg circle.rs-progress{
+    transform: rotate(-90deg);
+    transform-origin: center;
+}
+div.rs-container svg circle.rs-slider {
+    transform: rotate(-90deg);
+    transform-origin: center;
+}
+div.rs-container svg text.rs-value-text {
+    font: italic 4px sans-serif;
+    -webkit-user-select: none;
+        /* Safari */
+        -moz-user-select: none;
+        /* Firefox */
+        -ms-user-select: none;
+        /* IE10+/Edge */
+        user-select: none;
+        /* Standard */
 }
 </style>
-<div class="container">
-    <div class="radial-slider"> 
-        <input class="slider-input" type="range" id="slider" name="slider" min="0" max="0" step="0">
-    </div>
-    <label class="input-label" for="slider">Slider</label>
-    <span class="slider-value">$ 0</span>
+<div class="rs-container">
+	<svg
+		viewBox="0 0 50 50"
+		xmlns="http://www.w3.org/2000/svg"
+	>
+		<circle
+			r="15"
+			cx="25"
+			cy="25"
+			stroke-width="3px"
+			stroke="lightgray"
+			fill="gray"
+			fill-opacity="0.0"
+		/>
+		<circle
+			r="15"
+			cx="25"
+			cy="25"
+			stroke="white"
+			stroke-width="3px"
+			stroke-dasharray="0.1 0.9"
+			fill-opacity="0.0"
+			class="rs-slider"
+		/>
+		<circle
+			r="15"
+			cx="25"
+			cy="25"
+			stroke-width="3px"
+			stroke-opacity="0.5"
+			fill-opacity="0.0"
+			class="rs-progress"
+		/>
+		<circle
+			r="2"
+			fill="white"
+			cx="25"
+			cy="25"
+			stroke="gray"
+			stroke-width="0.2px"
+			class="rs-tack"
+		/>
+		<text class="rs-value-text" text-anchor="middle">0</text>
+	</svg>
 </div>
+
 `;
 class RangeSlider extends HTMLElement {
-    _config;
-    shadowRoot = this.attachShadow({mode: 'open'});
-    sliderElement; 
-    sliderValue
-    constructor(){
-        super();
-        let templateClone = template.content.cloneNode(true);
-        this.shadowRoot.append(templateClone);
-        this.sliderElement = this.shadowRoot.querySelector('.slider-input');
-        this.sliderValue = this.shadowRoot.querySelector('.slider-value');
-        this.sliderElement.addEventListener('input', ()=>{
-            let slider = this.sliderElement;
-            this.updateReactiveValue(slider.value);
-        })
+  _config;
+  shadowRoot = this.attachShadow({ mode: 'open' });
+  svgEl;
+  tackEl;
+  sliderEl;
+  progressEl;
+  textEl;
+  centerPos;
+  isDraggable;
+  isMouseOutside;
+  percentage;
+  value;
 
+  componentConfig = {
+    valueRange: 0,
+    numberOfSteps: 0,
+    stepPercentage: 0,
+    stepDegree: 0,
+    stepRadian: 0,
+    progressConst: 0,
+  };
+
+  constructor() {
+    super();
+    let templateClone = template.content.cloneNode(true);
+    this.shadowRoot.append(templateClone);
+    this.svgEl = this.shadowRoot.querySelector('svg');
+    this.tackEl = this.svgEl.querySelector('.rs-tack');
+    this.sliderEl = this.svgEl.querySelector('.rs-slider');
+    this.progressEl = this.svgEl.querySelector('.rs-progress');
+    this.textEl = this.svgEl.querySelector('.rs-value-text');
+
+    //add event listeners
+    this.tackEl.addEventListener('mousedown', () => {
+      this.setIsDraggable(true);
+      this.isMouseOutside = false;
+    });
+    this.tackEl.addEventListener('mousemove', (ev) => {
+      this.drag(ev);
+    });
+    this.tackEl.addEventListener('mouseleave', () => {
+      this.isMouseOutside = true;
+    });
+    this.tackEl.addEventListener('mouseup', () => {
+      this.setIsDraggable(false);
+    });
+
+    this.tackEl.addEventListener('touchstart', () => {
+      this.setIsDraggable(true);
+    });
+    this.tackEl.addEventListener('touchmove', (ev) => {
+      this.drag(ev);
+    });
+    this.tackEl.addEventListener('touchend', () => {
+      this.setIsDraggable(false);
+    });
+    document.addEventListener('mouseup', () => {
+      if (this.isDraggable) {
+        this.tackEl.dispatchEvent(new Event('mouseup'));
+      }
+    });
+    document.addEventListener('mousemove', (ev) => {
+      if (this.isDraggable && this.isMouseOutside) {
+        this.drag(ev);
+      }
+    });
+  }
+
+  static get observedAttributes() {
+    return ['config'];
+  }
+
+  attributeChangedCallback(attrName, oldVal, newVal) {
+    if (oldVal !== newVal) {
+      if (attrName === 'config') {
+        this.updateSliderProperties(JSON.parse(newVal));
+      }
     }
+  }
 
-    static get observedAttributes() {
-        return ['config'];
+  get config() {
+    return this._config;
+  }
+
+  set config(newVal) {
+    this._config = newVal;
+    if (newVal) {
+      const valueRange = newVal.max - newVal.min;
+      const numberOfSteps = valueRange / newVal.step;
+      const stepPercentage = 100 / numberOfSteps;
+      const stepDegree = 360 / numberOfSteps;
+      const stepRadian = (2 * Math.PI) / numberOfSteps;
+      const progressConst = (2 * Math.PI) / numberOfSteps;
+      this.componentConfig = {
+        valueRange: valueRange,
+        numberOfSteps: numberOfSteps,
+        stepPercentage: stepPercentage,
+        stepDegree: stepDegree,
+        stepRadian: stepRadian,
+        progressConst: progressConst,
+      };
+      this.setupSlider(newVal);
+      this.updateReactiveValue(newVal.min);
     }
+  }
 
-    attributeChangedCallback(attrName, oldVal, newVal) {
-        if (oldVal !== newVal) {
-            if(attrName === 'config'){
-                this.updateSliderProperties(JSON.parse(newVal));
-            }
+  updateReactiveValue(val) {
+    this.value = val;
+    this.textEl.textContent = val;
+  }
+
+  setupSlider(config) {
+    this.textEl.style.display = `none`;
+    // retrieve bounding box of slider
+    const rect = this.sliderEl.getBoundingClientRect();
+    // correction to retrieve element center coordinates
+    this.centerPos = this.getPosition(
+      Math.abs(rect.height - rect.top / 2 + config.radius),
+      Math.abs(rect.width - rect.left / 2 + config.radius)
+    );
+
+    console.log(this.tackEl);
+    console.log(config.radius);
+    this.tackEl.style.transform = `translate(${0}px, ${-config.radius}px)`;
+    console.log(this.tackEl);
+    this.isDraggable = false;
+    this.isMouseOutside = false;
+    this.percentage = 0;
+
+    this.value = config.min;
+
+    this.setProgressBar();
+    this.progressEl.style.stroke = config.color;
+
+    this.sliderEl.style.strokeDasharray = `${0.25} ${
+      this.componentConfig.progressConst / 100
+    }`;
+    this.sliderEl.style.strokeDashoffset = `${0.25}`;
+  }
+
+  drag(e) {
+    if (this.isDraggable) {
+      let coords;
+
+      if (e.type === 'touchmove') {
+        coords = this.getPosition(e.touches[0].clientY, e.touches[0].clientX);
+      } else {
+        coords = this.getPosition(e.clientY, e.clientX);
+      }
+
+      const angleRad = Math.atan2(
+        coords.y - this.centerPos.y,
+        coords.x - this.centerPos.x
+      );
+      const angleCalc = Math.floor((angleRad * 180) / Math.PI);
+      // shift angle for one quadrant backwards
+      const angleCalcShifted = angleCalc + 90;
+      // calculate percentage
+      const pct = Math.floor(
+        angleCalcShifted < 0
+          ? (angleCalcShifted + 360) / 3.6
+          : angleCalcShifted / 3.6
+      );
+
+      // calculate the current step
+      const step = Math.floor(pct / this.componentConfig.stepPercentage);
+      // calculate the step in percent of full circle
+      const percentageStep = step * this.componentConfig.stepPercentage;
+      // calculate the radians of steps and shift angle for one quadrant forwards
+      const radianStep =
+        ((step * this.componentConfig.stepDegree - 90) * Math.PI) / 180;
+      // check so bar doesn't move over 100% or below 0% unless the user rotates it for an extra 25%
+      if (this.percentage - percentageStep > -75) {
+        if (percentageStep - this.percentage > -75) {
+          if (
+            (percentageStep !== this.percentage) &
+            (percentageStep % this.componentConfig.stepPercentage === 0)
+          ) {
+            this.percentage = percentageStep;
+            this.updateReactiveValue(step * this._config.step);
+            this.setProgressBar();
+            const pointY =
+              this.centerPos.y + this._config.radius * Math.sin(radianStep);
+            const pointX =
+              this.centerPos.x + this._config.radius * Math.cos(radianStep);
+            this.moveTack(pointY, pointX);
+          }
+        } else {
+          this.percentage = 100;
+          this.updateReactiveValue(config.max);
+          this.setProgressBar();
+          this.moveTack(
+            this.centerPos.y - this._config.radius,
+            this.centerPos.x
+          );
         }
+      } else {
+        this.percentage = 0;
+        this.updateReactiveValue(this._config.min);
+        this.setProgressBar();
+        this.moveTack(this.centerPos.y - this._config.radius, this.centerPos.x);
+      }
     }
+  }
 
-    get config() {
-        return this._config;
+  setIsDraggable(draggable) {
+    if (draggable) {
+      this.textEl.style.display = `block`;
+    } else {
+      this.textEl.style.display = `none`;
     }
+    this.isDraggable = draggable;
+  }
 
-    set config(newVal) {
-        this._config = newVal;
-        if (newVal) {
-            this.updateSliderProperties(newVal);
-        }
-    }
+  moveTack(y, x) {
+    this.tackEl.setAttributeNS(null, 'cy', y + this._config.radius);
+    this.tackEl.setAttributeNS(null, 'cx', x);
+    this.textEl.setAttributeNS(null, 'y', y - 4);
+    this.textEl.setAttributeNS(null, 'x', x);
+  }
 
-    updateSliderProperties(config) {
-        const sliderLabel = this.shadowRoot.querySelector('.input-label')
-        this.sliderElement.min = config.min || '0';
-        this.sliderElement.max = config.max || '0';
-        this.sliderElement.step = config.step || '0';
-        this.sliderElement.name = config.container || 'default';
-        sliderLabel.innerHTML = config.container || 'default'
-    }
+  getPosition(y, x) {
+    let CTM = this.svgEl.getScreenCTM();
 
-    updateReactiveValue(value){
-        this.sliderValue.innerHTML = `\$ ${value}`;
-    }
+    return {
+      y: (y - CTM.f) / CTM.d,
+      x: (x - CTM.e) / CTM.a,
+    };
+  }
+
+  setProgressBar() {
+    this.progressEl.style.strokeDasharray = `${
+      (this.percentage * this.componentConfig.progressConst) / 100
+    } ${this.componentConfig.progressConst}`;
+  }
 }
 
-if(!customElements.get('range-slider')){
-    customElements.define('range-slider', RangeSlider);
+if (!customElements.get('range-slider')) {
+  customElements.define('range-slider', RangeSlider);
 }

@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Landing page is loaded');
+
+  const sliderData = oneSlider;
+
+  const rangeSliderElement = document.querySelector('range-slider');
+
+  rangeSliderElement.config = sliderData.sliderArray[0];
 });
 function addDraggable(e) {
   //config
@@ -22,19 +28,22 @@ function addDraggable(e) {
   const tack = svg.querySelector('.rs-tack');
   const slider = svg.querySelector('.rs-slider');
   const progress = svg.querySelector('.rs-progress');
-  // retrieve bounding box of slidert
+  const text = svg.querySelector('.rs-value-text');
+  text.style.display = `none`;
+  // retrieve bounding box of slider
   const rect = slider.getBoundingClientRect();
   // correction to retrieve element center coordinates
-  const centerPos = getMousePosition(
+  const centerPos = getPosition(
     Math.abs(rect.height - rect.top / 2 + radius),
     Math.abs(rect.width - rect.left / 2 + radius)
   );
-  moveTack(centerPos.y - radius, centerPos.x);
+
+  tack.style.transform = `translate(${0}px, ${-radius}px)`;
   let isDraggable = false;
   let isMouseOutside = false;
   let percentage = 0;
   // range properties
-  let value = 0;
+  let value = config.min;
 
   // setup
   setProgressBar();
@@ -44,7 +53,7 @@ function addDraggable(e) {
   slider.style.strokeDashoffset = `${0.25}`;
 
   tack.addEventListener('mousedown', () => {
-    isDraggable = true;
+    setIsDraggable(true);
     isMouseOutside = false;
   });
   tack.addEventListener('mousemove', drag);
@@ -78,9 +87,9 @@ function addDraggable(e) {
       let coords;
 
       if (e.type === 'touchmove') {
-        coords = getMousePosition(e.touches[0].clientY, e.touches[0].clientX);
+        coords = getPosition(e.touches[0].clientY, e.touches[0].clientX);
       } else {
-        coords = getMousePosition(e.clientY, e.clientX);
+        coords = getPosition(e.clientY, e.clientX);
       }
 
       const angleRad = Math.atan2(
@@ -111,8 +120,7 @@ function addDraggable(e) {
             (percentageStep % config.stepPercentage === 0)
           ) {
             percentage = percentageStep;
-            value = step * config.step;
-
+            updateValue(step * config.step);
             setProgressBar();
             const pointY = centerPos.y + radius * Math.sin(radianStep);
             const pointX = centerPos.x + radius * Math.cos(radianStep);
@@ -120,13 +128,13 @@ function addDraggable(e) {
           }
         } else {
           percentage = 100;
-          value = config.max;
+          updateValue(config.max);
           setProgressBar();
           moveTack(centerPos.y - radius, centerPos.x);
         }
       } else {
         percentage = 0;
-        value = config.min;
+        updateValue(config.min);
         setProgressBar;
         moveTack(centerPos.y - radius, centerPos.x);
       }
@@ -134,21 +142,32 @@ function addDraggable(e) {
   }
 
   function setIsDraggable(draggable) {
+    if (draggable) {
+      text.style.display = `block`;
+    } else {
+      text.style.display = `none`;
+    }
     isDraggable = draggable;
   }
 
   function moveTack(y, x) {
-    tack.setAttributeNS(null, 'cy', y);
+    tack.setAttributeNS(null, 'cy', y + radius);
     tack.setAttributeNS(null, 'cx', x);
+    text.setAttributeNS(null, 'y', y - 4);
+    text.setAttributeNS(null, 'x', x);
   }
 
-  function getMousePosition(y, x) {
+  function getPosition(y, x) {
     let CTM = svg.getScreenCTM();
 
     return {
       y: (y - CTM.f) / CTM.d,
       x: (x - CTM.e) / CTM.a,
     };
+  }
+  function updateValue(val) {
+    value = val;
+    text.textContent = val;
   }
 
   function setProgressBar() {

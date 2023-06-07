@@ -1,19 +1,4 @@
-div.container{
-    width: 1000px;
-    height: 1000px;
-    margin: 0 auto;
-    display: inline-block;
-    touch-action: none;
-}
-div.container svg {
-    width: 100%;
-    height: 100%;
-}
-div.container svg circle.rs-progress{
-    transform: rotate(-90deg);
-    transform-origin: center;
-}
-div.container svg circle.rs-slider {
-    transform: rotate(-90deg);
-    transform-origin: center;
+range-slider{
+    max-width: 1000px;
+    max-height: 1000px;
 }
