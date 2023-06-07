@@ -201,7 +201,6 @@ class RangeSlider extends HTMLElement {
     this.textEl.style.display = `none`;
     // retrieve bounding box of slider
     const rect = this.sliderEl.getBoundingClientRect();
-    console.log(rect);
     // correction to retrieve element center coordinates
     this.centerPos = this.getPosition(
       Math.abs(rect.height / 2 + rect.top),
@@ -300,7 +299,6 @@ class RangeSlider extends HTMLElement {
   }
 
   moveTack(y, x) {
-    console.log(x, y);
     this.tackEl.setAttributeNS(null, 'cy', y);
     this.tackEl.setAttributeNS(null, 'cx', x);
     this.textEl.setAttributeNS(null, 'y', y - 4);
@@ -317,7 +315,6 @@ class RangeSlider extends HTMLElement {
   }
 
   setProgressBar() {
-    console.log(this.componentConfig.progressConst);
     this.progressEl.style.strokeDasharray = `${
       (this.percentage * this.componentConfig.progressConst) / 100
     } ${this.componentConfig.progressConst}`;
