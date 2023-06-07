@@ -1,4 +1,5 @@
 # Reactive Vanilla JS radial slider
+
 This repository contains a reactive radial slider implemented without any external library.
 
 ## Needed tasks to completion
@@ -13,23 +14,29 @@ This sections contains the necessary (main) tasks that need to be completed for 
 - [x] Add options parameters to range slider
 - [x] Add reactivity
 - [x] Add JS rendering of HTML for range slider
-- [ ] Optimize slider for touch interactions 
-- [ ] Change shape of range slider into a circle
-- [ ] Add color rendering of data line
-- [ ] Add multiple sliders
+- [ ] Optimize slider for touch interactions
+- [x] Change shape of range slider into a circle
+- [x] Add color rendering of data line
+- [x] Add multiple sliders
 - [ ] Styling application to fit mockups
 
 ### Additional optional tasks
 
-- [ ] Add a tag on top of slider for mobile to display current value of that slider
+- [x] Add a tag on top of slider for mobile to display current value of that slider
 
 ### Potential UX improvements
+
 - [ ] Identify potential UX improvements in the slider
 - [ ] Prepare a list of UX improvements
 
 ## Low-fi mocks
+
 These low-fi mockups were created in Figma
+
 ### Mobile
+
 ![low-fi mobile](/assets/images/low_fi_mobile.png)
+
 ### Desktop
+
 ![low-fi desktop](/assets/images/low_fi_desktop.png)
