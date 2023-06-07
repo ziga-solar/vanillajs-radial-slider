@@ -19,6 +19,10 @@ function addDraggable(e) {
 
   let isDraggable = false;
   let isMouseOutside = false;
+  let percentage = 0;
+  let angle = 0;
+
+  setProgressBar();
 
   tack.addEventListener('mousedown', () => {
     isDraggable = true;
@@ -53,26 +57,35 @@ function addDraggable(e) {
   function drag(e) {
     if (isDraggable) {
       let coords;
+
       if (e.type === 'touchmove') {
         coords = getMousePosition(e.touches[0].clientY, e.touches[0].clientX);
       } else {
         coords = getMousePosition(e.clientY, e.clientX);
       }
+
       const angleRad = Math.atan2(
         coords.y - centerPos.y,
         coords.x - centerPos.x
       );
-      const angle = Math.floor((angleRad * 180) / Math.PI) + 90;
-      // shift angle for one quadrant and calculate percentage
-      const pct = Math.floor((angle < 0 ? angle + 360 : angle) / 3.6);
+      const angleCalc = Math.floor((angleRad * 180) / Math.PI) + 90;
+      // shift angle for one quadrant
+      const shiftedAngle = angleCalc < 0 ? angleCalc + 360 : angleCalc;
+      // calculate percentage
+      const pct = shiftedAngle / 3.6;
 
-      progress.style.strokeDasharray = `${
-        (pct * progressConst) / 100
-      } ${progressConst}`;
-      const pointY = centerPos.y + radius * Math.sin(angleRad);
-      const pointX = centerPos.x + radius * Math.cos(angleRad);
-
-      moveTack(pointY, pointX);
+      // check if tack would move backwards below 0% and if if would move over 100%
+      if (
+        !(angle - shiftedAngle + 360 < shiftedAngle) &
+        (pct - percentage > -90)
+      ) {
+        angle = shiftedAngle;
+        percentage = pct;
+        setProgressBar();
+        const pointY = centerPos.y + radius * Math.sin(angleRad);
+        const pointX = centerPos.x + radius * Math.cos(angleRad);
+        moveTack(pointY, pointX);
+      }
     }
   }
 
@@ -92,5 +105,11 @@ function addDraggable(e) {
       y: (y - CTM.f) / CTM.d,
       x: (x - CTM.e) / CTM.a,
     };
+  }
+
+  function setProgressBar() {
+    progress.style.strokeDasharray = `${
+      (percentage * progressConst) / 100
+    } ${progressConst}`;
   }
 }
