@@ -67,7 +67,7 @@ const fiveSliders = {
       color: '#FF674D',
       max: 1200,
       min: 500,
-      step: 100,
+      step: 25,
       radius: 60,
     },
   ],

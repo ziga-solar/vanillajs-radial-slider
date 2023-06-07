@@ -2,7 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Landing page is loaded');
   let i = 1;
 
-  const sliderData = fiveSliders.sliderArray;
+  const sliderData = fiveSliders.sliderArray.sort(
+    (a, b) => parseFloat(b.radius) - parseFloat(a.radius)
+  );
   const mainContainerElement = document.querySelector('.main-container');
   const sliderContainerElement =
     mainContainerElement.querySelector('.slider-container');

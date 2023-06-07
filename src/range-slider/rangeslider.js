@@ -27,6 +27,13 @@ div.rs-container svg circle.rs-slider {
     transform: rotate(-90deg);
     transform-origin: center;
 }
+
+div.rs-container svg circle.rs-tap {
+  transform: rotate(-90deg);
+  transform-origin: center;
+  pointer-events: auto;
+}
+
 div.rs-container svg text.rs-value-text {
     font: italic 4px sans-serif;
     -webkit-user-select: none;
@@ -50,6 +57,7 @@ div.rs-container svg text.rs-value-text {
 		viewBox="0 0 150 150"
 		xmlns="http://www.w3.org/2000/svg"
 	>
+    
 		<circle
 			r="0"
 			cx="75"
@@ -78,6 +86,14 @@ div.rs-container svg text.rs-value-text {
 			fill-opacity="0.0"
 			class="rs-progress"
 		/>
+    <circle
+			r="0"
+			cx="75"
+			cy="75"
+			fill="gray"
+			fill-opacity="0.0"
+			class="rs-tap"
+		/>
 		<circle
 			r="4"
 			fill="white"
@@ -101,6 +117,7 @@ class RangeSlider extends HTMLElement {
   progressEl;
   backgroundEl;
   textEl;
+  tapEl;
   centerPos;
   isDraggable;
   isMouseOutside;
@@ -127,7 +144,7 @@ class RangeSlider extends HTMLElement {
     this.progressEl = this.svgEl.querySelector('.rs-progress');
     this.backgroundEl = this.svgEl.querySelector('.rs-background');
     this.textEl = this.svgEl.querySelector('.rs-value-text');
-
+    this.tapEl = this.svgEl.querySelector('.rs-tap');
     //add event listeners
     this.tackEl.addEventListener('mousedown', () => {
       this.setIsDraggable(true);
@@ -152,6 +169,19 @@ class RangeSlider extends HTMLElement {
     this.tackEl.addEventListener('touchend', () => {
       this.setIsDraggable(false);
     });
+
+    this.tapEl.addEventListener('mousedown', (ev) => {
+      this.setIsDraggable(true);
+      this.drag(ev);
+      this.setIsDraggable(false);
+    });
+
+    this.tapEl.addEventListener('touchStart', (ev) => {
+      this.setIsDraggable(true);
+      this.drag(ev);
+      this.setIsDraggable(false);
+    });
+
     document.addEventListener('mouseup', () => {
       if (this.isDraggable) {
         this.tackEl.dispatchEvent(new Event('mouseup'));
@@ -220,6 +250,7 @@ class RangeSlider extends HTMLElement {
     this.backgroundEl.setAttributeNS(null, 'r', config.radius);
     this.progressEl.setAttributeNS(null, 'r', config.radius);
     this.sliderEl.setAttributeNS(null, 'r', config.radius);
+    this.tapEl.setAttributeNS(null, 'r', config.radius + 3);
     this.textEl.style.display = `none`;
     // retrieve bounding box of slider
     const rect = this.sliderEl.getBoundingClientRect();
