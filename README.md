@@ -14,11 +14,11 @@ This sections contains the necessary (main) tasks that need to be completed for 
 - [x] Add options parameters to range slider
 - [x] Add reactivity
 - [x] Add JS rendering of HTML for range slider
-- [ ] Optimize slider for touch interactions
+- [x] Optimize slider for touch interactions
 - [x] Change shape of range slider into a circle
 - [x] Add color rendering of data line
 - [x] Add multiple sliders
-- [ ] Styling application to fit mockups
+- [x] Styling application to fit mockups
 
 ### Additional optional tasks
 
@@ -28,6 +28,10 @@ This sections contains the necessary (main) tasks that need to be completed for 
 
 - [ ] Identify potential UX improvements in the slider
 - [ ] Prepare a list of UX improvements
+
+### Potential code improvements
+
+- [ ] Rework CSS
 
 ## Low-fi mocks
 
