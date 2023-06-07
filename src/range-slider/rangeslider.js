@@ -105,7 +105,7 @@ class RangeSlider extends HTMLElement {
   isDraggable;
   isMouseOutside;
   percentage;
-	currentStep;
+  currentStep;
   value;
 
   componentConfig = {
@@ -203,12 +203,17 @@ class RangeSlider extends HTMLElement {
   }
 
   updateReactiveValue(val) {
-    if(this.value != val){
+    if (this.value != val) {
       this.value = val;
       this.textEl.textContent = val;
-      this.shadowRoot.dispatchEvent(new CustomEvent('rsChangeValue', {detail: {value: val}, composed: true, bubbles: true}))
+      this.shadowRoot.dispatchEvent(
+        new CustomEvent('rsChangeValue', {
+          detail: { value: val },
+          composed: true,
+          bubbles: true,
+        })
+      );
     }
-
   }
 
   setupSlider(config) {
@@ -244,7 +249,7 @@ class RangeSlider extends HTMLElement {
   drag(e) {
     if (this.isDraggable) {
       let coords;
-	
+
       if (e.type === 'touchmove') {
         coords = this.getPosition(e.touches[0].clientY, e.touches[0].clientX);
       } else {
@@ -275,11 +280,11 @@ class RangeSlider extends HTMLElement {
 
       if (this.percentage - percentageStep > -75) {
         if (percentageStep - this.percentage > -75) {
-          if (
-            (percentageStep !== this.percentage)
-          ) {
+          if (percentageStep !== this.percentage) {
             this.percentage = percentageStep;
-            this.updateReactiveValue(step * this._config.step + this._config.min);
+            this.updateReactiveValue(
+              step * this._config.step + this._config.min
+            );
             this.setProgressBar();
             const pointY =
               this.centerPos.y + this._config.radius * Math.sin(radianStep);
