@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.0.1] 2023-06-07
+
+- Fixed tap on slider functionality
+
 ## [1.0.0] 2023-06-07
 
 - Updated styling to match mockup
