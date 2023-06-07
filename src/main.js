@@ -2,27 +2,47 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Landing page is loaded');
 });
 function addDraggable(e) {
-  const radius = 15;
+  //config
+  const config = {
+    step: 10,
+    min: 0,
+    max: 800,
+    radius: 15,
+    container: 'Transportation',
+    color: '#444389',
+    valueRange: 800 - 0,
+    numberOfSteps: (800 - 0) / 10,
+    stepPercentage: 100 / ((800 - 0) / 10),
+    stepDegree: 360 / ((800 - 0) / 10),
+    stepRadian: (2 * Math.PI) / ((800 - 0) / 10),
+  };
+  const radius = config.radius;
   const progressConst = Math.ceil(2 * Math.PI * radius);
   const svg = e.target;
   const tack = svg.querySelector('.rs-tack');
   const slider = svg.querySelector('.rs-slider');
   const progress = svg.querySelector('.rs-progress');
-  // retrieve center of SVG
+  // retrieve bounding box of slidert
   const rect = slider.getBoundingClientRect();
+  // correction to retrieve element center coordinates
   const centerPos = getMousePosition(
     Math.abs(rect.height - rect.top / 2 + radius),
     Math.abs(rect.width - rect.left / 2 + radius)
   );
-  tack.setAttributeNS(null, 'cy', centerPos.y - radius);
-  tack.setAttributeNS(null, 'cx', centerPos.x);
+  moveTack(centerPos.y - radius, centerPos.x);
 
   let isDraggable = false;
   let isMouseOutside = false;
   let percentage = 0;
-  let angle = 0;
+  // range properties
+  let value = 0;
 
+  // setup
   setProgressBar();
+  progress.style.stroke = config.color;
+  slider.style.strokeDasharray = `${0.2} ${
+    progressConst / config.numberOfSteps
+  }`;
 
   tack.addEventListener('mousedown', () => {
     isDraggable = true;
@@ -68,23 +88,48 @@ function addDraggable(e) {
         coords.y - centerPos.y,
         coords.x - centerPos.x
       );
-      const angleCalc = Math.floor((angleRad * 180) / Math.PI) + 90;
-      // shift angle for one quadrant
-      const shiftedAngle = angleCalc < 0 ? angleCalc + 360 : angleCalc;
+      const angleCalc = Math.floor((angleRad * 180) / Math.PI);
+      // shift angle for one quadrant backwards
+      const angleCalcShifted = angleCalc + 90;
       // calculate percentage
-      const pct = shiftedAngle / 3.6;
+      const pct = Math.floor(
+        angleCalcShifted < 0
+          ? (angleCalcShifted + 360) / 3.6
+          : angleCalcShifted / 3.6
+      );
 
-      // check if tack would move backwards below 0% and if if would move over 100%
-      if (
-        !(angle - shiftedAngle + 360 < shiftedAngle) &
-        (pct - percentage > -90)
-      ) {
-        angle = shiftedAngle;
-        percentage = pct;
-        setProgressBar();
-        const pointY = centerPos.y + radius * Math.sin(angleRad);
-        const pointX = centerPos.x + radius * Math.cos(angleRad);
-        moveTack(pointY, pointX);
+      // calculate the current step
+      const step = Math.floor(pct / config.stepPercentage);
+      // calculate the step in percent of full circle
+      const percentageStep = step * config.stepPercentage;
+      // calculate the radians of steps and shift angle for one quadrant forwards
+      const radianStep = ((step * config.stepDegree - 90) * Math.PI) / 180;
+      // check so bar doesn't move over 100% or below 0% unless the user rotates it for an extra 25%
+      if (percentage - percentageStep > -75) {
+        if (percentageStep - percentage > -75) {
+          if (
+            (percentageStep !== percentage) &
+            (percentageStep % config.stepPercentage === 0)
+          ) {
+            percentage = percentageStep;
+            value = step * config.step;
+
+            setProgressBar();
+            const pointY = centerPos.y + radius * Math.sin(radianStep);
+            const pointX = centerPos.x + radius * Math.cos(radianStep);
+            moveTack(pointY, pointX);
+          }
+        } else {
+          percentage = 100;
+          value = config.max;
+          setProgressBar();
+          moveTack(centerPos.y - radius, centerPos.x);
+        }
+      } else {
+        percentage = 0;
+        value = config.min;
+        setProgressBar;
+        moveTack(centerPos.y - radius, centerPos.x);
       }
     }
   }
