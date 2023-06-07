@@ -18,11 +18,16 @@ function addDraggable(e) {
   tack.setAttributeNS(null, 'cx', centerPos.x);
 
   let isDraggable = false;
+  let isMouseOutside = false;
 
   tack.addEventListener('mousedown', () => {
-    setIsDraggable(true);
+    isDraggable = true;
+    isMouseOutside = false;
   });
   tack.addEventListener('mousemove', drag);
+  tack.addEventListener('mouseleave', () => {
+    isMouseOutside = true;
+  });
   tack.addEventListener('mouseup', () => {
     setIsDraggable(false);
   });
@@ -33,6 +38,16 @@ function addDraggable(e) {
   tack.addEventListener('touchmove', drag);
   tack.addEventListener('touchend', () => {
     setIsDraggable(false);
+  });
+  document.addEventListener('mouseup', () => {
+    if (isDraggable) {
+      tack.dispatchEvent(new Event('mouseup'));
+    }
+  });
+  document.addEventListener('mousemove', (ev) => {
+    if (isDraggable && isMouseOutside) {
+      drag(ev);
+    }
   });
 
   function drag(e) {
