@@ -30,7 +30,6 @@ function addDraggable(e) {
     Math.abs(rect.width - rect.left / 2 + radius)
   );
   moveTack(centerPos.y - radius, centerPos.x);
-
   let isDraggable = false;
   let isMouseOutside = false;
   let percentage = 0;
@@ -40,9 +39,9 @@ function addDraggable(e) {
   // setup
   setProgressBar();
   progress.style.stroke = config.color;
-  slider.style.strokeDasharray = `${0.2} ${
-    progressConst / config.numberOfSteps
-  }`;
+
+  slider.style.strokeDasharray = `${0.25} ${progressConst / 100}`;
+  slider.style.strokeDashoffset = `${0.25}`;
 
   tack.addEventListener('mousedown', () => {
     isDraggable = true;

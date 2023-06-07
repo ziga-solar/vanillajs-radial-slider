@@ -13,3 +13,7 @@ div.container svg circle.rs-progress{
     transform: rotate(-90deg);
     transform-origin: center;
 }
+div.container svg circle.rs-slider {
+    transform: rotate(-90deg);
+    transform-origin: center;
+}
