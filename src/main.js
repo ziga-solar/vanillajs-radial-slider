@@ -22,15 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     sliderValueTextContainerElement.classList.add(sliderId);
     rangeSliderElement.classList.add(sliderId);
-    sliderValueTextElement.classList.add('slider-value')
+    sliderValueTextElement.classList.add('slider-value', 'slider-text')
     sliderValueColorElement.classList.add('slider-color')
-    sliderValueCategoryElement.classList.add('slider-category')
+    sliderValueCategoryElement.classList.add('slider-category', 'slider-text')
 
     rangeSliderElement.config = slider;
     rangeSliderElement.addEventListener('rsChangeValue', (e) => {
-      sliderValueTextElement.innerHTML = `$ ${e.detail.value}`;
+      sliderValueTextElement.innerHTML = `$${e.detail.value}`;
     });
-    sliderValueTextElement.innerHTML =`$ ${slider.min}`;
+    sliderValueTextElement.innerHTML =`$${slider.min}`;
     sliderValueColorElement.style.backgroundColor = `${slider.color}`
     sliderValueCategoryElement.innerHTML =`${slider.container}`;
     

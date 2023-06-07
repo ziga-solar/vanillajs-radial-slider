@@ -3,7 +3,7 @@ const oneSlider = {
     {
       container: 'Transportation',
       color: '#444389',
-      max: 1100,
+      max: 100,
       min: 0,
       step: 5,
       radius: 20,
@@ -20,7 +20,7 @@ const twoSliders = {
       max: 1000,
       min: 0,
       step: 10,
-      radius: 15,
+      radius: 30,
     },
   ],
 };
@@ -35,7 +35,7 @@ const threeSliders = {
       max: 900,
       min: 200,
       step: 10,
-      radius: 25,
+      radius: 40,
     },
   ],
 };
@@ -51,7 +51,7 @@ const fourSliders = {
       max: 800,
       min: 30,
       step: 15,
-      radius: 10,
+      radius: 50,
     },
   ],
 };
@@ -68,7 +68,7 @@ const fiveSliders = {
       max: 1200,
       min: 500,
       step: 100,
-      radius: 30,
+      radius: 60,
     },
   ],
 };

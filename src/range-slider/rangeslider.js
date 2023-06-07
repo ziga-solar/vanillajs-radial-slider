@@ -2,8 +2,8 @@ const template = document.createElement('template');
 template.innerHTML = `
 <style>
 div.rs-container{
-    width: 50vw;
-    height: 100vh;
+    width: 80vw;
+    height: 80vw;
     margin: 0 auto;
     display: inline-block;
     touch-action: none;
@@ -38,6 +38,12 @@ div.rs-container svg text.rs-value-text {
         user-select: none;
         /* Standard */
 }
+@media only screen and (min-width: 768px) {
+  div.rs-container{
+    width: 40vw;
+    height: 40vw;
+  }
+}
 </style>
 <div class="rs-container">
 	<svg
@@ -48,7 +54,7 @@ div.rs-container svg text.rs-value-text {
 			r="0"
 			cx="75"
 			cy="75"
-			stroke-width="3px"
+			stroke-width="6px"
 			stroke="lightgray"
 			fill="gray"
 			fill-opacity="0.0"
@@ -59,7 +65,7 @@ div.rs-container svg text.rs-value-text {
 			cx="75"
 			cy="75"
 			stroke="white"
-			stroke-width="3px"
+			stroke-width="6px"
 			fill-opacity="0.0"
 			class="rs-slider"
 		/>
@@ -67,18 +73,18 @@ div.rs-container svg text.rs-value-text {
 			r="0"
 			cx="75"
 			cy="75"
-			stroke-width="3px"
+			stroke-width="6px"
 			stroke-opacity="0.5"
 			fill-opacity="0.0"
 			class="rs-progress"
 		/>
 		<circle
-			r="2"
+			r="4"
 			fill="white"
 			cx="75"
 			cy="75"
 			stroke="gray"
-			stroke-width="0.2px"
+			stroke-width="0.5px"
 			class="rs-tack"
 		/>
 		<text class="rs-value-text" text-anchor="middle"></text>
@@ -229,10 +235,10 @@ class RangeSlider extends HTMLElement {
     this.setProgressBar();
     this.progressEl.style.stroke = config.color;
 
-    this.sliderEl.style.strokeDasharray = `${0.25} ${
+    this.sliderEl.style.strokeDasharray = `${0.5} ${
       this.componentConfig.progressConst / this.componentConfig.numberOfSteps
     }`;
-    this.sliderEl.style.strokeDashoffset = `${1}`;
+    this.sliderEl.style.strokeDashoffset = `${2}`;
   }
 
   drag(e) {
