@@ -2,8 +2,8 @@ const template = document.createElement('template');
 template.innerHTML = `
 <style>
 div.rs-container{
-		width: 500px;
-		height: 500px;
+    width: 50vw;
+    height: 100vh;
     margin: 0 auto;
     display: inline-block;
     touch-action: none;
@@ -81,14 +81,14 @@ div.rs-container svg text.rs-value-text {
 			stroke-width="0.2px"
 			class="rs-tack"
 		/>
-		<text class="rs-value-text" text-anchor="middle">0</text>
+		<text class="rs-value-text" text-anchor="middle"></text>
 	</svg>
 </div>
 
 `;
 class RangeSlider extends HTMLElement {
   _config;
-  shadowRoot = this.attachShadow({ mode: 'closed' });
+  shadowRoot = this.attachShadow({ mode: 'open' });
   svgEl;
   tackEl;
   sliderEl;
@@ -197,8 +197,12 @@ class RangeSlider extends HTMLElement {
   }
 
   updateReactiveValue(val) {
-    this.value = val;
-    this.textEl.textContent = val;
+    if(this.value != val){
+      this.value = val;
+      this.textEl.textContent = val;
+      this.shadowRoot.dispatchEvent(new CustomEvent('rsChangeValue', {detail: {value: val}, composed: true, bubbles: true}))
+    }
+
   }
 
   setupSlider(config) {
@@ -207,10 +211,8 @@ class RangeSlider extends HTMLElement {
     this.sliderEl.setAttributeNS(null, 'r', config.radius);
     this.textEl.style.display = `none`;
     // retrieve bounding box of slider
-		console.log(this.sliderEl);
     const rect = this.sliderEl.getBoundingClientRect();
     // correction to retrieve element center coordinates
-		console.log(this.sliderEl);
     this.centerPos = this.getPosition(
       Math.abs(rect.height / 2 + rect.top),
       Math.abs(rect.width / 2 + rect.left)
@@ -228,9 +230,9 @@ class RangeSlider extends HTMLElement {
     this.progressEl.style.stroke = config.color;
 
     this.sliderEl.style.strokeDasharray = `${0.25} ${
-      this.componentConfig.progressConst / 100
+      this.componentConfig.progressConst / this.componentConfig.numberOfSteps
     }`;
-    this.sliderEl.style.strokeDashoffset = `${0.25}`;
+    this.sliderEl.style.strokeDashoffset = `${1}`;
   }
 
   drag(e) {
@@ -300,8 +302,10 @@ class RangeSlider extends HTMLElement {
   setIsDraggable(draggable) {
     if (draggable) {
       this.textEl.style.display = `block`;
+      this.svgEl.style.zIndex = 5;
     } else {
       this.textEl.style.display = `none`;
+      this.svgEl.style.zIndex = 0;
     }
     this.isDraggable = draggable;
   }
